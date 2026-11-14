@@ -225,6 +225,43 @@ def apply():
     .lesson b, .lesson strong, .good b, .bad b {color:%(acc)s;}
     .mono {color:%(acc)s !important;}
     hr {border-color:%(gb)s !important;}
+    .eyebrow {font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:%(muted)s; font-weight:600; margin-bottom:10px;}
+    .hero {padding:34px 40px 30px !important;}
+    .hero h1 {background:linear-gradient(90deg, #F8FAFC 0%%, %(title)s 55%%, %(acc2)s 100%%); -webkit-background-clip:text;
+           background-clip:text; color:transparent !important; font-size:2.25rem !important; line-height:1.2 !important;}
+    .pill {padding:4px 14px !important; font-weight:500;}
+    .pill:nth-of-type(1) {border-color:rgba(147,197,253,.55) !important;} .pill.m {border-color:rgba(196,181,253,.55) !important;}
+    .pill.g {border-color:rgba(134,239,172,.5) !important;} .pill.y {border-color:rgba(252,211,77,.5) !important;}
+    div[data-testid="stTabs"] [data-baseweb="tab-list"] {gap:4px; background:rgba(255,255,255,.035); padding:5px;
+           border:1px solid %(gb)s; border-radius:14px; width:fit-content;}
+    div[data-testid="stTabs"] button[role="tab"] {border-radius:10px; padding:7px 16px !important; margin:0 !important;}
+    div[data-testid="stTabs"] button[role="tab"]:hover {background:rgba(255,255,255,.05);}
+    div[data-testid="stTabs"] button[aria-selected="true"] {background:rgba(%(acc_rgb)s,.14); box-shadow: inset 0 0 0 1px rgba(%(acc_rgb)s,.45);}
+    div[data-testid="stTabs"] button[aria-selected="true"] p {color:%(head)s !important;}
+    div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] {display:none !important;}
+    .kpi {position:relative; overflow:hidden; padding:18px 20px !important;}
+    .kpi:before {content:""; position:absolute; left:0; right:0; top:0; height:2px; background:var(--k, %(acc)s);}
+    div[data-testid="stColumn"]:nth-of-type(1) .kpi {--k:#93C5FD;} div[data-testid="stColumn"]:nth-of-type(2) .kpi {--k:#C4B5FD;}
+    div[data-testid="stColumn"]:nth-of-type(3) .kpi {--k:#86EFAC;} div[data-testid="stColumn"]:nth-of-type(4) .kpi {--k:#FCD34D;}
+    div[data-testid="stColumn"]:nth-of-type(5) .kpi {--k:#F9A8D4;} div[data-testid="stColumn"]:nth-of-type(6) .kpi {--k:#67E8F9;}
+    .kpi {min-height:118px;}
+    .kpi .v {font-size:1.6rem !important; letter-spacing:-.01em; white-space:nowrap;}
+    .kpi .l {color:%(muted)s !important; font-size:.7rem !important; letter-spacing:.12em !important;}
+    h3 {position:relative; padding-left:14px !important;}
+    h3:before {content:""; position:absolute; left:0; top:22%%; bottom:22%%; width:4px; border-radius:4px;
+           background:linear-gradient(180deg, %(acc)s, %(acc2)s);}
+    .card.who {display:flex; gap:14px; align-items:flex-start; border-top:2px solid var(--c) !important; min-height:150px;}
+    .card.who h4 {color:%(head)s !important; font-size:1rem !important; margin-bottom:4px !important;}
+    .card.who p {color:%(muted)s !important;}
+    .av {flex:0 0 auto; width:40px; height:40px; border-radius:50%%; display:flex; align-items:center; justify-content:center;
+           font-weight:700; font-size:.85rem; color:#0B1020; background:var(--c); box-shadow:0 0 0 3px rgba(255,255,255,.06);}
+    .sb-label {font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:%(muted)s; font-weight:600; margin:16px 0 8px;}
+    .tm {display:flex; gap:12px; align-items:flex-start; padding:10px 12px; margin-bottom:8px; border-radius:12px;
+           background:rgba(255,255,255,.035); border:1px solid %(gb)s;}
+    .tm .av {width:34px; height:34px; font-size:.75rem;}
+    .tm .tn {font-weight:600; color:%(head)s; font-size:.92rem; line-height:1.25;}
+    .tm .tid {font-family:'JetBrains Mono', monospace; font-size:.74rem !important;}
+    .tm .tpart {font-size:.78rem !important; line-height:1.35; display:block; margin-top:2px;}
     ::-webkit-scrollbar {width:10px; height:10px;} ::-webkit-scrollbar-track {background:transparent;}
     ::-webkit-scrollbar-thumb {background:rgba(%(acc_rgb)s,.6); border-radius:10px;}
     </style>""" % dict(grad=S["grad"], blobs=_blobs, gs=(.35 if LIGHT else .04), gb=_gb, gt=_gt, sh=_sh,
@@ -252,7 +289,7 @@ def apply():
 
 def gv(dot: str, **kw):
     """Graphviz with theme colors swapped in."""
-    for a, b in {"#111A2E": T["panel"], "#2B3D63": T["border"], "#1C2340": T["h2"], "#38BDF8": T["acc"],
+    for a, b in {"#111A2E": ("#11162A" if T["glow"] else T["panel"]), "#2B3D63": ("#3A4A6B" if T["glow"] else T["border"]), "#1C2340": T["h2"], "#38BDF8": T["acc"],
                  "#E8EEF7": T["text"], "#7DD3FC": T["acc2"], "#B6C2D6": T["muted"], "#64748B": T["muted"],
                  "#C084FC": MAGENTA, "#34D399": GREEN, "#FBBF24": (T["acc2"] if T["glow"] else AMBER)}.items():
         dot = dot.replace(a, b)

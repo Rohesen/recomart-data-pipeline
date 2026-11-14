@@ -53,6 +53,14 @@ from recomart.storage import LakeStorage, tree  # noqa: E402
 from recomart.train import registry_versions, runs_dataframe  # noqa: E402
 
 
+STAGE_COLORS = ["#93C5FD", "#C4B5FD", "#86EFAC", "#FCD34D"]
+
+
+def initials(name):
+    parts = name.split()
+    return (parts[0][0] + parts[-1][0]).upper()
+
+
 def kpi(col, value, label):
     col.markdown(f'<div class="kpi"><div class="v">{value}</div><div class="l">{label}</div></div>', unsafe_allow_html=True)
 
@@ -79,10 +87,11 @@ def load_json(p: str):
 with st.sidebar:
     st.markdown("### RecoMart Data Pipeline")
     st.caption("DSE ZG529 · Data Management for ML\nExperiential Learning Assignment (EC1)")
-    st.markdown("**Team**")
-    for m in TEAM:
-        st.markdown(f"**{m['member']}** — {m['name']}  \n<span class='tid'>{m['id']}</span> · "
-                    f"<span class='tpart'>{m['part']}</span>", unsafe_allow_html=True)
+    st.markdown('<div class="sb-label">Team</div>', unsafe_allow_html=True)
+    for i, m in enumerate(TEAM):
+        st.markdown(f'<div class="tm"><div class="av" style="--c:{STAGE_COLORS[i]}">{initials(m["name"])}</div>'
+                    f'<div><div class="tn">{m["name"]}</div><div class="tid">{m["id"]}</div>'
+                    f'<div class="tpart">{m["part"]}</div></div></div>', unsafe_allow_html=True)
     st.divider()
     runs = read_runs()
     if runs:
@@ -98,7 +107,7 @@ with st.sidebar:
         pass
 
 # ---------------------------------------------------------------- header
-st.markdown("""<div class="hero"><h1>RecoMart — End-to-End Data Management Pipeline for Recommendations</h1>
+st.markdown("""<div class="hero"><div class="eyebrow">DSE ZG529 · Data Management for Machine Learning · BITS Pilani WILP</div><h1>RecoMart — End-to-End Data Management Pipeline for Recommendations</h1>
 <p>Clickstream, transactions, ratings, user profiles and two REST APIs flow through ingestion, a partitioned
 data lake, validation, preparation, a SQL warehouse, a versioned feature store and model training, orchestrated
 as one Prefect DAG and served as personalised recommendations.</p>
@@ -125,27 +134,28 @@ with tabs[0]:
     kpi(c[4], f"{sum(len(v['snapshots']) for v in feature_store.load_registry()['views'].values())}", "feature snapshots")
     kpi(c[5], f"{best[f'ndcg_at_{K}']:.3f}", f"champion NDCG@{K}")
     st.write("")
-    left, right = st.columns([1.5, 1])
-    with left:
-        st.subheader("Pipeline DAG")
-        ui.gv("""digraph G { rankdir=LR; bgcolor="transparent"; nodesep=0.25; ranksep=0.35;
-          node [shape=box style="rounded,filled" fontname="Inter" fontsize=10 color="#2B3D63" fillcolor="#111A2E" fontcolor="#E8EEF7"];
-          edge [color="#64748B"];
-          s1 [label="Clickstream CSV"]; s2 [label="Transactions CSV"]; s3 [label="Ratings CSV"]; s4 [label="Users CSV"];
-          s5 [label="Catalog REST API"]; s6 [label="Popularity API"];
-          ing [label="① Ingest\\nretry · logging" color="#38BDF8"]; lake [label="Raw lake\\nsource/type/date" color="#38BDF8"];
-          val [label="② Validate\\nDQ report" color="#C084FC"]; prep [label="② Prepare\\nclean · encode" color="#C084FC"];
-          eda [label="② EDA" color="#C084FC"]; wh [label="③ SQL warehouse\\n+ features" color="#34D399"];
-          fs [label="③ Feature store\\nversioned" color="#34D399"]; tr [label="④ Train + MLflow" color="#FBBF24"];
-          api [label="④ Recommend API" color="#FBBF24"];
-          {s1 s2 s3 s4 s5 s6} -> ing -> lake -> val -> prep; prep -> eda; prep -> wh -> fs -> tr -> api; }""")
-        st.caption("Orchestrated by Prefect (flows/recomart_flow.py) and reproducible with DVC (dvc.yaml).")
-    with right:
-        st.subheader("Who does what")
-        for i, m in enumerate(TEAM):
-            st.markdown(f'<div class="card" style="margin-bottom:10px"><h4>{"①②③④"[i]} {m["part"]}</h4>'
-                        f'<p>{m["member"]} — {m["name"]} · <span class="mono">{m["id"]}</span></p></div>',
-                        unsafe_allow_html=True)
+    st.subheader("Pipeline DAG")
+    ui.gv("""digraph G { rankdir=LR; bgcolor="transparent"; nodesep=0.22; ranksep=0.32; pad=0.1;
+      node [shape=box style="rounded,filled" fontname="Inter" fontsize=12 margin="0.14,0.06" penwidth=1.4
+            color="#2B3D63" fillcolor="#111A2E" fontcolor="#E8EEF7"];
+      edge [color="#64748B" arrowsize=0.6 penwidth=1.1];
+      src [label="6 sources\\n4 CSV feeds · 2 REST APIs" color="#94A3B8"];
+      ing [label="① Ingest\\nretry · logging" color="#93C5FD"]; lake [label="Raw lake\\nsource/type/date" color="#93C5FD"];
+      val [label="② Validate\\nDQ report" color="#C4B5FD"]; prep [label="② Prepare\\nclean · encode" color="#C4B5FD"];
+      eda [label="② EDA" color="#C4B5FD"]; wh [label="③ SQL warehouse\\n+ features" color="#86EFAC"];
+      fs [label="③ Feature store\\nversioned" color="#86EFAC"]; tr [label="④ Train + MLflow" color="#FCD34D"];
+      api [label="④ Recommend API" color="#FCD34D"];
+      src -> ing -> lake -> val -> prep; prep -> eda; prep -> wh -> fs -> tr -> api; }""")
+    st.caption("Orchestrated by Prefect (flows/recomart_flow.py) and reproducible with DVC (dvc.yaml).")
+    st.subheader("Who does what")
+    wc = st.columns(4)
+    for i, m in enumerate(TEAM):
+        wc[i].markdown(f'<div class="card who" style="--c:{STAGE_COLORS[i]}">'
+                       f'<div class="av" style="--c:{STAGE_COLORS[i]}">{initials(m["name"])}</div><div>'
+                       f'<h4>{"①②③④"[i]} {m["part"]}</h4>'
+                       f'<p>{m["name"]}<br><span class="mono">{m["id"]}</span></p></div></div>',
+                       unsafe_allow_html=True)
+    st.write("")
     st.subheader("Latest run, stage by stage")
     if runs:
         rid = runs[-1]["run_id"]
@@ -399,7 +409,7 @@ with tabs[4]:
     o1, o2 = st.columns([1, 1.3])
     with o1:
         ui.gv("""digraph{rankdir=TB;bgcolor=transparent;node[shape=box style="rounded,filled" fillcolor="#111A2E"
-          color="#FBBF24" fontcolor="#E8EEF7" fontname=Inter fontsize=10];edge[color="#64748B"];
+          color="#FCD34D" fontcolor="#E8EEF7" fontname=Inter fontsize=10];edge[color="#64748B"];
           ingest[label="ingest\\nretries=2"]; validate[label="validate\\nquality gate"]; prepare; eda;
           transform; features; train; ingest->validate->prepare; prepare->eda; prepare->transform->features->train;}""")
         st.code("python flows/recomart_flow.py      # one run\nprefect server start              # UI :4200\n"
