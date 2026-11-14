@@ -1,20 +1,59 @@
-"""Streamlit theme: a single glassmorphism theme (deep violet, frosted panels, 3D spheres)."""
+"""Streamlit theme: glassmorphism skins (gradient background, soft colour blobs, frosted glass panels)."""
 # flake8: noqa
 import streamlit as st
 
 
 
+def _rgba(hex_color, alpha):
+    h = hex_color.lstrip("#")
+    return "rgba(%d,%d,%d,%s)" % (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), alpha)
+
+
 def apply():
     """Compute the active theme and inject its CSS (call once per script run)."""
-    global THEMES, THEME_NAME, T, LIGHT, NAVY, TEAL, AMBER, RED, GREEN, GREY, MAGENTA, BG, PANEL, BORDER, MUTED, PLOT, SH, SH_HOVER
+    global THEMES, THEME_NAME, SKIN, SKINS, T, LIGHT, NAVY, TEAL, AMBER, RED, GREEN, GREY, MAGENTA, BG, PANEL, BORDER, MUTED, PLOT, SH, SH_HOVER
     _D = dict(mode="dark", lesson="#FDE9B0", good="#C8F5E2", bad="#FBD0D0", on_acc="#0B0F14", glow=False)
     _L = dict(mode="light", lesson="#7A5300", good="#065F46", bad="#9F1239", on_acc="#FFFFFF", glow=False)
-    THEMES = {
-        "Glass Violet": {**_D, **dict(bg="#160B33", side="#1A0D3C", panel="#241452", panel2="#1E1046", border="#4B2E8C",
-                         acc="#A78BFA", acc2="#7DD3FC", acc_rgb="167,139,250", h1="#241452", h2="#2E1A63",
-                         text="#EEE9FF", head="#FFFFFF", sub="#C4B5FD", muted="#B3A6D9", glow=True)},
+    # ---- glassmorphism skins (one is active; ?skin=<key> previews another) ----
+    SKINS = {
+        "aurora":   dict(mode="dark", base="#071423", grad="linear-gradient(160deg,#06101F 0%,#0B1E33 55%,#071A2A 100%)",
+                         blobs=[("#14B8A6",.55,"8% 10%",900), ("#6366F1",.45,"95% 15%",800), ("#06B6D4",.35,"70% 95%",900)],
+                         acc="#5EEAD4", acc2="#A5B4FC", acc_rgb="94,234,212", title="#99F6E4", text="#E2F3F5", head="#FFFFFF",
+                         sub="#5EEAD4", muted="#9BB4BF", glass=.08, colorway=["#5EEAD4","#A5B4FC","#38BDF8","#F0ABFC","#FDE68A","#FB7185"]),
+        "midnight": dict(mode="dark", base="#05060A", grad="linear-gradient(180deg,#05060A 0%,#0A0D16 100%)",
+                         blobs=[("#3B82F6",.30,"15% 0%",900), ("#8B5CF6",.22,"90% 30%",800), ("#0EA5E9",.15,"50% 100%",1000)],
+                         acc="#93C5FD", acc2="#C4B5FD", acc_rgb="147,197,253", title="#BFDBFE", text="#E5E7EB", head="#FFFFFF",
+                         sub="#93C5FD", muted="#9CA3AF", glass=.05, colorway=["#93C5FD","#C4B5FD","#67E8F9","#F9A8D4","#FDE68A","#86EFAC"]),
+        "sunset":   dict(mode="dark", base="#1A0B1E", grad="linear-gradient(150deg,#1B0A24 0%,#3A0F2E 50%,#4A1A1A 100%)",
+                         blobs=[("#F97316",.45,"95% 5%",850), ("#EC4899",.45,"5% 40%",850), ("#A855F7",.35,"60% 100%",900)],
+                         acc="#FDBA74", acc2="#F9A8D4", acc_rgb="253,186,116", title="#FED7AA", text="#FCE7F3", head="#FFFFFF",
+                         sub="#FDBA74", muted="#D6B4C2", glass=.09, colorway=["#FDBA74","#F9A8D4","#C4B5FD","#FDE68A","#5EEAD4","#FB7185"]),
+        "ocean":    dict(mode="dark", base="#041A33", grad="linear-gradient(160deg,#03162C 0%,#06305A 55%,#0A4A7A 100%)",
+                         blobs=[("#38BDF8",.45,"90% 0%",900), ("#22D3EE",.35,"0% 60%",850), ("#60A5FA",.35,"60% 100%",900)],
+                         acc="#7DD3FC", acc2="#A5F3FC", acc_rgb="125,211,252", title="#7DD3FC", text="#E0F2FE", head="#FFFFFF",
+                         sub="#7DD3FC", muted="#A5C4DA", glass=.10, colorway=["#7DD3FC","#A5F3FC","#C4B5FD","#FDE68A","#86EFAC","#FDA4AF"]),
+        "emerald":  dict(mode="dark", base="#03140F", grad="linear-gradient(160deg,#03120E 0%,#062A20 55%,#0B3B2E 100%)",
+                         blobs=[("#10B981",.45,"5% 5%",850), ("#84CC16",.25,"95% 30%",800), ("#14B8A6",.35,"55% 100%",900)],
+                         acc="#6EE7B7", acc2="#BEF264", acc_rgb="110,231,183", title="#A7F3D0", text="#E3F7EE", head="#FFFFFF",
+                         sub="#6EE7B7", muted="#9FC2B3", glass=.08, colorway=["#6EE7B7","#BEF264","#67E8F9","#FDE68A","#C4B5FD","#FDA4AF"]),
+        "frost":    dict(mode="light", base="#EEF2FF", grad="linear-gradient(140deg,#E0E7FF 0%,#F5F3FF 40%,#E0F2FE 75%,#FCE7F3 100%)",
+                         blobs=[("#A5B4FC",.70,"5% 5%",850), ("#7DD3FC",.60,"95% 20%",800), ("#F9A8D4",.55,"60% 100%",900)],
+                         acc="#4F46E5", acc2="#0284C7", acc_rgb="79,70,229", title="#3730A3", text="#1E1B4B", head="#0F0B33",
+                         sub="#4338CA", muted="#5B5F86", glass=.55, colorway=["#4F46E5","#0284C7","#DB2777","#059669","#D97706","#7C3AED"]),
     }
-    THEME_NAME = "Glass Violet"   # single theme: deep violet with glassmorphism panels and 3D spheres
+    SKIN_DEFAULT = "aurora"
+    try:
+        _q = st.query_params.get("skin")
+    except Exception:
+        _q = None
+    SKIN = _q if _q in SKINS else SKIN_DEFAULT
+    S = SKINS[SKIN]
+    _base = dict(mode=S["mode"], lesson=S["text"], good=S["text"], bad=S["text"],
+                 on_acc="#FFFFFF" if S["mode"] == "light" else "#04121F", glow=True)
+    THEMES = {"Glass": {**_base, **dict(bg=S["base"], side=S["base"], panel=S["base"], panel2=S["base"], border="rgba(255,255,255,.18)",
+                     acc=S["acc"], acc2=S["acc2"], acc_rgb=S["acc_rgb"], h1=S["base"], h2=S["base"], text=S["text"],
+                     head=S["head"], sub=S["sub"], muted=S["muted"])}}
+    THEME_NAME = "Glass"
     T = THEMES[THEME_NAME]
     LIGHT = T["mode"] == "light"
 
@@ -31,8 +70,8 @@ def apply():
                 title_font=dict(family="Source Serif 4, Georgia, serif", size=17),
                 margin=dict(l=10, r=10, t=48, b=10))
     if T["glow"]:
-        PLOT["colorway"] = ["#A78BFA", "#7DD3FC", "#FB7185", "#86EFAC", "#FDE68A", "#C084FC"]
-        PLOT["plot_bgcolor"] = "rgba(255,255,255,.04)"
+        PLOT["colorway"] = S["colorway"]
+        PLOT["plot_bgcolor"] = "rgba(255,255,255,.04)" if not LIGHT else "rgba(255,255,255,.35)"
 
     SH = ("0 1px 2px rgba(15,23,42,.06), 0 10px 24px -12px rgba(15,23,42,.18)" if LIGHT else
           "0 1px 0 rgba(255,255,255,.04) inset, 0 10px 22px -10px rgba(0,0,0,.7), 0 2px 4px rgba(0,0,0,.3)")
@@ -138,73 +177,59 @@ def apply():
         _css += """<style>
     [data-testid="stSlider"], [data-testid="stCheckbox"], .stToggle, [data-testid="stMultiSelect"] span {filter: grayscale(1);}
     </style>"""
-    if T["glow"]:   # glassmorphism: deep violet, frosted panels, soft 3D spheres; text stays crisp
+    if T["glow"]:   # glassmorphism skin: gradient background, soft colour blobs, frosted panels; text stays crisp
+        _blobs = ",".join("radial-gradient(closest-side, %s, rgba(0,0,0,0)) %s / %dpx %dpx no-repeat"
+                          % (_rgba(c, o), pos, sz, sz) for c, o, pos, sz in S["blobs"])
+        _g = S["glass"]
+        _gb = "rgba(255,255,255,.65)" if LIGHT else "rgba(255,255,255,.18)"
+        _gt = "rgba(255,255,255,.9)" if LIGHT else "rgba(255,255,255,.32)"
+        _sh = "0 8px 32px rgba(30,27,75,.12)" if LIGHT else "0 8px 32px rgba(0,0,0,.40)"
         _css += """<style>
-    .stApp {background: linear-gradient(140deg, #120826 0%, #22104C 45%, #2B1160 70%, #170A35 100%) !important; background-attachment:fixed !important;}
-    .stApp:before {content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
-           background:
-             radial-gradient(circle closest-side at 36% 32%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%) 104% -8% / 340px 340px no-repeat,
-             radial-gradient(circle closest-side, #FDA4AF 0, #F43F5E 55%, #9F1239 96%, rgba(0,0,0,0) 100%) 104% -8% / 340px 340px no-repeat,
-             radial-gradient(circle closest-side at 36% 32%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%) 18.5% 64% / 190px 190px no-repeat,
-             radial-gradient(circle closest-side, #DDD6FE 0, #8B5CF6 55%, #4C1D95 96%, rgba(0,0,0,0) 100%) 18.5% 64% / 190px 190px no-repeat,
-             radial-gradient(circle closest-side at 36% 32%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%) 64% 1.5% / 96px 96px no-repeat,
-             radial-gradient(circle closest-side, #FEF3C7 0, #FCD34D 55%, #B45309 96%, rgba(0,0,0,0) 100%) 64% 1.5% / 96px 96px no-repeat,
-             radial-gradient(circle closest-side at 36% 32%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%) 24% 112% / 200px 200px no-repeat,
-             radial-gradient(circle closest-side, #BBF7D0 0, #22C55E 55%, #14532D 96%, rgba(0,0,0,0) 100%) 24% 112% / 200px 200px no-repeat,
-             radial-gradient(circle closest-side at 36% 32%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%) 103% 94% / 260px 260px no-repeat,
-             radial-gradient(circle closest-side, #BAE6FD 0, #3B82F6 55%, #1E3A8A 96%, rgba(0,0,0,0) 100%) 103% 94% / 260px 260px no-repeat,
-             radial-gradient(800px 500px at 15% 0%, rgba(167,139,250,.22), transparent 60%),
-             radial-gradient(700px 500px at 100% 100%, rgba(125,211,252,.12), transparent 60%);
-           opacity:.75;}
+    .stApp {background: %(grad)s !important; background-attachment:fixed !important;}
+    .stApp:before {content:""; position:fixed; inset:0; pointer-events:none; z-index:0; background: %(blobs)s;}
     .block-container {position:relative; z-index:1;}
-    section[data-testid="stSidebar"] {background: rgba(30,14,66,.55) !important; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-           border-right:1px solid rgba(255,255,255,.14);}
-    section[data-testid="stSidebar"] h3 {color:#C4B5FD !important;}
-    .tid {color:#7DD3FC !important;}
+    section[data-testid="stSidebar"] {background: rgba(255,255,255,%(gs)s) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+           border-right:1px solid %(gb)s;}
+    section[data-testid="stSidebar"] h3 {color:%(acc)s !important;}
+    .tid {color:%(acc)s !important;} .tpart {color:%(muted)s !important;}
+    .stApp p, .stApp li, .stApp label, .stApp [data-testid="stMarkdownContainer"] {color:%(text)s;}
     .hero, .card, .kpi, div[data-testid="stPlotlyChart"], div[data-testid="stGraphVizChart"], div[data-testid="stDataFrame"],
-    div[data-testid="stExpander"], .lesson, .good {
-           background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.04)) !important;
-           backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%);
-           border:1px solid rgba(255,255,255,.20) !important; border-top-color: rgba(255,255,255,.35) !important;
-           box-shadow: 0 8px 32px rgba(10,4,30,.45) !important; transform:none !important;}
+    div[data-testid="stExpander"], .lesson, .good, .bad {
+           background: linear-gradient(135deg, rgba(255,255,255,%(g1)s), rgba(255,255,255,%(g2)s)) !important;
+           backdrop-filter: blur(18px) saturate(150%%); -webkit-backdrop-filter: blur(18px) saturate(150%%);
+           border:1px solid %(gb)s !important; border-top-color:%(gt)s !important;
+           box-shadow: %(sh)s !important; transform:none !important;}
     .hero {border-radius:24px; position:relative; overflow:hidden;}
     .hero:before {content:""; position:absolute; left:0; right:0; top:0; height:3px;
-           background:linear-gradient(90deg,#A78BFA,#7DD3FC,#86EFAC,#FDE68A,#FB7185,#A78BFA); background-size:300% 100%;
-           animation:flow 9s linear infinite;}
-    @keyframes flow {0%{background-position:0% 0} 100%{background-position:300% 0}}
-    .hero h1 {color:#7DD3FC !important; text-shadow:none !important;}
+           background:linear-gradient(90deg,%(acc)s,%(acc2)s,%(acc)s); background-size:200%% 100%%; animation:flow 8s linear infinite;}
+    @keyframes flow {0%%{background-position:0%% 0} 100%%{background-position:200%% 0}}
+    .hero h1 {color:%(title)s !important; text-shadow:none !important;}
     .hero h1 a, h1 a, h2 a, h3 a, [data-testid="stHeaderActionElements"] {display:none !important;}
-    .hero p {color:#E4DCFF !important; opacity:1 !important;}
-    h2 {color:#FFFFFF !important; text-shadow:none !important;} h3 {color:#C4B5FD !important; text-shadow:none !important;}
-    .pill {border:1px solid rgba(255,255,255,.30) !important; background:rgba(255,255,255,.10) !important; color:#FFFFFF !important; box-shadow:none;}
-    .pill:nth-of-type(1) {border-color:#A78BFA !important;} .pill.m {border-color:#7DD3FC !important;}
-    .pill.g {border-color:#86EFAC !important;} .pill.y {border-color:#FB7185 !important;}
-    .kpi {border-radius:18px; border-top:2px solid #A78BFA !important;}
-    .kpi:nth-child(6n+2) {border-top-color:#7DD3FC !important;} .kpi:nth-child(6n+3) {border-top-color:#86EFAC !important;}
-    .kpi:nth-child(6n+4) {border-top-color:#FDE68A !important;} .kpi:nth-child(6n+5) {border-top-color:#FB7185 !important;}
-    .kpi .v {color:#FFFFFF !important; text-shadow:none !important;}
-    .kpi .l {color:#C4B5FD !important;}
-    .card {border-radius:18px;} .card h4 {color:#7DD3FC !important; text-shadow:none !important;}
-    .card:hover, .kpi:hover {border-color:rgba(196,181,253,.7) !important; box-shadow:0 12px 36px rgba(139,92,246,.35) !important;}
-    .owner {border:1px solid #A78BFA !important; background:rgba(167,139,250,.15) !important; color:#EDE9FE !important; box-shadow:none;}
-    div[data-testid="stTabs"] button[aria-selected="true"] p {color:#FFFFFF !important; text-shadow:none !important;}
-    div[data-baseweb="tab-highlight"] {background:linear-gradient(90deg,#A78BFA,#7DD3FC) !important; box-shadow:none;}
-    .stButton > button, .stDownloadButton > button {border:1px solid rgba(196,181,253,.6) !important; color:#EDE9FE !important;
-           background:rgba(255,255,255,.08) !important; box-shadow:none;}
-    .stButton > button[kind="primary"] {background:linear-gradient(90deg,#8B5CF6,#60A5FA) !important; color:#FFFFFF !important; border:none !important;
-           box-shadow:0 6px 20px rgba(139,92,246,.45) !important;}
-    .lesson {border-left:4px solid #A78BFA !important; color:#EDE9FE !important;}
-    .lesson b, .lesson strong {color:#7DD3FC;}
-    .good {border-left:4px solid #86EFAC !important; color:#DCFCE7 !important;}
-    .bad {border-left-color:#FB7185 !important;}
-    div[data-testid="stCode"] pre {background:rgba(15,6,38,.75) !important; border:1px solid rgba(255,255,255,.15);}
-    .mono {color:#7DD3FC;}
-    hr {border-color:rgba(255,255,255,.15) !important;}
-    ::-webkit-scrollbar {width:10px; height:10px;}
-    ::-webkit-scrollbar-track {background:#160B33;}
-    ::-webkit-scrollbar-thumb {background:linear-gradient(180deg,#A78BFA,#7DD3FC); border-radius:10px;}
-    ::selection {background:rgba(167,139,250,.45); color:#fff;}
-    </style>"""
+    .hero p {color:%(text)s !important; opacity:.92 !important;}
+    h2 {color:%(head)s !important; text-shadow:none !important;} h3 {color:%(sub)s !important; text-shadow:none !important;}
+    .pill, .pill.m, .pill.g, .pill.y {border:1px solid %(gb)s !important; background:rgba(255,255,255,%(g1)s) !important;
+           color:%(head)s !important; box-shadow:none !important;}
+    .kpi {border-radius:18px;} .kpi .v {color:%(head)s !important; text-shadow:none !important;} .kpi .l {color:%(sub)s !important;}
+    .card {border-radius:18px;} .card h4 {color:%(acc)s !important; text-shadow:none !important;}
+    .card:hover, .kpi:hover {border-color:%(acc)s !important;}
+    .owner {border:1px solid %(acc)s !important; background:rgba(%(acc_rgb)s,.14) !important; color:%(head)s !important; box-shadow:none !important;}
+    div[data-testid="stTabs"] button p {color:%(text)s !important;}
+    div[data-testid="stTabs"] button[aria-selected="true"] p {color:%(acc)s !important; text-shadow:none !important;}
+    div[data-baseweb="tab-highlight"] {background:%(acc)s !important; box-shadow:none !important;}
+    .stButton > button, .stDownloadButton > button {border:1px solid %(gb)s !important; color:%(head)s !important;
+           background:rgba(255,255,255,%(g1)s) !important; box-shadow:none !important;}
+    .stButton > button[kind="primary"] {background:%(acc)s !important; color:%(on)s !important; border:none !important;}
+    .lesson {border-left:4px solid %(acc)s !important; color:%(text)s !important;}
+    .good {border-left:4px solid %(acc2)s !important; color:%(text)s !important;}
+    .bad {border-left:4px solid #FB7185 !important; color:%(text)s !important;}
+    .lesson b, .lesson strong, .good b, .bad b {color:%(acc)s;}
+    .mono {color:%(acc)s !important;}
+    hr {border-color:%(gb)s !important;}
+    ::-webkit-scrollbar {width:10px; height:10px;} ::-webkit-scrollbar-track {background:transparent;}
+    ::-webkit-scrollbar-thumb {background:rgba(%(acc_rgb)s,.6); border-radius:10px;}
+    </style>""" % dict(grad=S["grad"], blobs=_blobs, gs=(.35 if LIGHT else .04), gb=_gb, gt=_gt, sh=_sh,
+                       g1=_g, g2=(_g * .4), acc=S["acc"], acc2=S["acc2"], acc_rgb=S["acc_rgb"], title=S["title"],
+                       text=S["text"], head=S["head"], sub=S["sub"], muted=S["muted"], on=T["on_acc"])
     st.markdown(_css, unsafe_allow_html=True)
 
     from streamlit.delta_generator import DeltaGenerator  # noqa: E402
