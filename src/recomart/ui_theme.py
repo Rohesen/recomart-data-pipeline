@@ -311,6 +311,9 @@ def apply():
     .flow .fd {color:%(muted)s; font-size:.76rem; margin-top:3px; line-height:1.3;}
     .flow .arr {align-self:center; color:%(muted)s; font-size:1.1rem;}
     [data-testid="stTab"] {border-bottom:none !important;}
+    [data-testid="stSidebarHeader"] {height:2.4rem !important; min-height:0 !important; padding:.4rem .75rem 0 !important; margin-bottom:0 !important;}
+    [data-testid="stSidebarUserContent"] {padding-top:0 !important;}
+    section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] > div > div > div:first-child h3 {margin-top:0 !important; padding-top:0 !important;}
     ::-webkit-scrollbar {width:10px; height:10px;} ::-webkit-scrollbar-track {background:transparent;}
     ::-webkit-scrollbar-thumb {background:rgba(%(acc_rgb)s,.6); border-radius:10px;}
     </style>""" % dict(grad=S["grad"], blobs=_blobs, gs=(.35 if LIGHT else .04), gb=_gb, gt=_gt, sh=_sh,
