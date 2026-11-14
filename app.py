@@ -287,7 +287,7 @@ with tabs[1]:
                     f"timeout **{ic['timeout_seconds']} s** · schedule every **{ic['schedule_minutes']} min**")
     with b:
         st.subheader("Raw data lake layout")
-        st.code(tree(), language="text")
+        st.code(tree(), language="text", height=330)
     man = pd.DataFrame(LakeStorage.manifest())
     st.subheader("Lake manifest (audit trail of stored objects)")
     if not man.empty:
@@ -418,7 +418,7 @@ with tabs[3]:
         st.subheader("Feature logic (SQL)")
         sqlf = st.selectbox("Transformation", ["features_user.sql", "features_item.sql", "features_cooccurrence.sql",
                                                "schema.sql"])
-        st.code((SQL_DIR / sqlf).read_text(), language="sql")
+        st.code((SQL_DIR / sqlf).read_text(), language="sql", height=330)
 
     reg = feature_store.load_registry()
     st.subheader("Feature registry")
@@ -507,6 +507,7 @@ with tabs[4]:
             agg = rr.groupby("run_id").agg(started=("finished_at", "min"), stages=("stage", "count"),
                                            failed=("status", lambda s: int((s == "failed").sum())),
                                            seconds=("seconds", "sum")).reset_index().sort_values("started", ascending=False)
+            agg["started"] = pd.to_datetime(agg["started"]).dt.strftime("%d %b, %H:%M")
             st.markdown("**Run history** (logs/runs.jsonl)")
             st.dataframe(agg.head(15).round(2), hide_index=True, width="stretch")
         st.markdown("**Alerts** (logs/alerts.log)")

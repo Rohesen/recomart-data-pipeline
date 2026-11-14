@@ -247,8 +247,8 @@ def apply():
     .kpi {min-height:118px;}
     .kpi .v {font-size:1.6rem !important; letter-spacing:-.01em; white-space:nowrap;}
     .kpi .l {color:%(muted)s !important; font-size:.7rem !important; letter-spacing:.12em !important;}
-    h3 {position:relative; padding-left:14px !important;}
-    h3:before {content:""; position:absolute; left:0; top:22%%; bottom:22%%; width:4px; border-radius:4px;
+    h3 {padding-left:0 !important;}
+    h3:before {content:""; display:inline-block; width:4px; height:.95em; border-radius:4px; margin-right:10px; vertical-align:-.12em;
            background:linear-gradient(180deg, %(acc)s, %(acc2)s);}
     .card.who {display:flex; gap:14px; align-items:flex-start; border-top:2px solid var(--c) !important; min-height:150px;}
     .card.who h4 {color:%(head)s !important; font-size:1rem !important; margin-bottom:4px !important;}

@@ -1,5 +1,6 @@
 """Run after the pipeline has been executed once:  python -m recomart.pipeline && pytest -q"""
 import json
+import logging
 
 import numpy as np
 import pandas as pd
@@ -13,6 +14,15 @@ from recomart.storage import LakeStorage, partition_key
 
 
 # ---------------- ingestion & storage
+@pytest.fixture
+def quiet_ingestion_log():
+    """Keep the deliberate test failures out of the real ingestion log shown in the app."""
+    lg = logging.getLogger("recomart.ingestion")
+    lg.disabled = True
+    yield
+    lg.disabled = False
+
+
 def test_partition_key_layout_and_safety():
     assert partition_key("clickstream", "events", "2026-08-01", "a.csv") == \
         "source=clickstream/type=events/date=2026-08-01/a.csv"
@@ -20,7 +30,7 @@ def test_partition_key_layout_and_safety():
         partition_key("../etc", "events", "2026-08-01", "a.csv")
 
 
-def test_retry_succeeds_after_transient_failures():
+def test_retry_succeeds_after_transient_failures(quiet_ingestion_log):
     calls = {"n": 0}
 
     def flaky():
@@ -31,7 +41,7 @@ def test_retry_succeeds_after_transient_failures():
     assert with_retry(flaky, "flaky", retries=4, backoff=0) == "ok" and calls["n"] == 3
 
 
-def test_retry_gives_up_and_raises():
+def test_retry_gives_up_and_raises(quiet_ingestion_log):
     with pytest.raises(IngestionError):
         with_retry(lambda: 1 / 0, "always fails", retries=2, backoff=0)
 
