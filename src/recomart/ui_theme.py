@@ -30,6 +30,9 @@ def apply():
                 plot_bgcolor=T["panel2"], font=dict(family="Inter, Segoe UI, sans-serif", color=NAVY, size=13),
                 title_font=dict(family="Source Serif 4, Georgia, serif", size=17),
                 margin=dict(l=10, r=10, t=48, b=10))
+    if T["glow"]:
+        PLOT["colorway"] = ["#38BDF8", "#5EEAD4", "#A5B4FC", "#7DD3FC", "#FCD34D", "#FB7185"]
+        PLOT["plot_bgcolor"] = "rgba(9,18,31,.6)"
 
     SH = ("0 1px 2px rgba(15,23,42,.06), 0 10px 24px -12px rgba(15,23,42,.18)" if LIGHT else
           "0 1px 0 rgba(255,255,255,.04) inset, 0 10px 22px -10px rgba(0,0,0,.7), 0 2px 4px rgba(0,0,0,.3)")
@@ -135,34 +138,60 @@ def apply():
         _css += """<style>
     [data-testid="stSlider"], [data-testid="stCheckbox"], .stToggle, [data-testid="stMultiSelect"] span {filter: grayscale(1);}
     </style>"""
-    if T["glow"]:   # sky-blue neon: soft glows on headings, numbers, cards, tabs and buttons
+    if T["glow"]:   # crisp sky-blue neon: glow on borders and lines only, text stays sharp (no haze)
         _css += """<style>
-    .stApp {background: radial-gradient(1000px 520px at 0% -10%, rgba(56,189,248,.16), transparent 60%),
-                        radial-gradient(900px 480px at 100% 0%, rgba(14,165,233,.10), transparent 55%), #050A14 !important;}
-    section[data-testid="stSidebar"] {border-right:1px solid rgba(56,189,248,.35); box-shadow: 0 0 24px rgba(56,189,248,.12);}
-    .hero {background: linear-gradient(115deg, rgba(14,165,233,.22), rgba(56,189,248,.08) 50%, rgba(125,211,252,.18));
-           border:1px solid rgba(56,189,248,.55); box-shadow: 0 0 30px rgba(56,189,248,.30), inset 0 0 40px rgba(56,189,248,.10);
-           position:relative; overflow:hidden;}
+    .stApp {background: radial-gradient(900px 420px at 0% -10%, rgba(56,189,248,.07), transparent 60%), #050A14 !important;}
+    .stApp:before {content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+           background-image: linear-gradient(rgba(56,189,248,.035) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(56,189,248,.035) 1px, transparent 1px);
+           background-size: 44px 44px;
+           mask-image: radial-gradient(1200px 700px at 50% 0%, #000 30%, transparent 85%);
+           -webkit-mask-image: radial-gradient(1200px 700px at 50% 0%, #000 30%, transparent 85%);}
+    .block-container {position:relative; z-index:1;}
+    section[data-testid="stSidebar"] {background:#060D1A !important; border-right:1px solid rgba(56,189,248,.35);}
+    section[data-testid="stSidebar"] h3 {color:#38BDF8 !important;}
+    .hero {background:#0A1628 !important; border:1px solid #1E5A85 !important; border-radius:20px;
+           box-shadow: 0 0 0 1px rgba(56,189,248,.15), 0 0 22px rgba(56,189,248,.18) !important;
+           position:relative; overflow:hidden; transform:none !important;}
     .hero:before {content:""; position:absolute; left:0; right:0; top:0; height:3px;
            background:linear-gradient(90deg,#0EA5E9,#7DD3FC,#E0F2FE,#38BDF8,#0EA5E9); background-size:300% 100%;
-           animation:flow 7s linear infinite; box-shadow:0 0 12px #38BDF8;}
+           animation:flow 7s linear infinite;}
     @keyframes flow {0%{background-position:0% 0} 100%{background-position:300% 0}}
-    .hero h1 {color:#F0F9FF !important; text-shadow:0 0 8px #38BDF8, 0 0 24px rgba(56,189,248,.65);}
-    h2 {text-shadow:0 0 16px rgba(56,189,248,.45);} h3 {text-shadow:0 0 12px rgba(56,189,248,.5);}
-    .pill, .pill.m, .pill.g, .pill.y {border-color:#38BDF8 !important; color:#BAE6FD !important; background:rgba(56,189,248,.08);
-           box-shadow:0 0 10px rgba(56,189,248,.40);}
-    .kpi {border-top:2px solid #38BDF8; border-left:1px solid var(--border); box-shadow:0 0 16px rgba(56,189,248,.18);}
-    .kpi .v {color:#E0F2FE; text-shadow:0 0 12px rgba(56,189,248,.8);}
-    .card h4 {text-shadow:0 0 8px rgba(56,189,248,.6);}
-    .card:hover, .kpi:hover {border-color:#7DD3FC; box-shadow:0 0 26px rgba(56,189,248,.45);}
-    .owner {box-shadow:0 0 12px rgba(56,189,248,.45);}
-    div[data-baseweb="tab-highlight"] {background:linear-gradient(90deg,#0EA5E9,#7DD3FC) !important; box-shadow:0 0 12px #38BDF8;}
-    div[data-testid="stTabs"] button[aria-selected="true"] p {color:#E0F2FE; text-shadow:0 0 10px rgba(56,189,248,.8);}
-    .stButton > button[kind="primary"] {background:linear-gradient(90deg,#0284C7,#38BDF8); color:#04121F; font-weight:600;
-           border:none; box-shadow:0 0 18px rgba(56,189,248,.55);}
-    .stButton > button:hover, .stDownloadButton > button:hover {box-shadow:0 0 18px rgba(56,189,248,.6); border-color:#38BDF8;}
-    div[data-testid="stPlotlyChart"], div[data-testid="stGraphVizChart"], div[data-testid="stDataFrame"]
-           {box-shadow:0 0 18px rgba(56,189,248,.14);}
+    .hero h1 {color:#FFFFFF !important; text-shadow:none !important;}
+    .hero h1 a, h1 a, h2 a, h3 a, [data-testid="stHeaderActionElements"] {display:none !important;}
+    .hero p {color:#C9D7E8 !important; opacity:1 !important;}
+    h2 {color:#F0F9FF !important; text-shadow:none !important;} h3 {color:#7DD3FC !important; text-shadow:none !important;}
+    .pill, .pill.m, .pill.g, .pill.y {border:1px solid #38BDF8 !important; color:#BAE6FD !important;
+           background:rgba(56,189,248,.06) !important; box-shadow:0 0 8px rgba(56,189,248,.30);}
+    .card, .kpi {background:#0A1628 !important; border:1px solid #17406A !important; transform:none !important;}
+    .kpi {border-top:2px solid #38BDF8 !important; border-radius:16px; box-shadow:0 0 12px rgba(56,189,248,.12) !important;}
+    .kpi .v {color:#FFFFFF !important; text-shadow:none !important;}
+    .kpi .l {color:#7DD3FC !important;}
+    .card h4 {color:#7DD3FC !important; text-shadow:none !important;}
+    .card:hover, .kpi:hover {border-color:#38BDF8 !important; box-shadow:0 0 18px rgba(56,189,248,.35) !important;}
+    .owner {border:1px solid #38BDF8 !important; color:#BAE6FD !important; box-shadow:0 0 8px rgba(56,189,248,.30);}
+    div[data-testid="stTabs"] [data-baseweb="tab-list"] {gap:6px; background:#081426; padding:6px;
+           border:1px solid #17406A; border-radius:14px;}
+    div[data-testid="stTabs"] button[role="tab"] {border-radius:10px; padding:8px 16px;}
+    div[data-testid="stTabs"] button[role="tab"]:hover {background:rgba(56,189,248,.08);}
+    div[data-testid="stTabs"] button[aria-selected="true"] {background:#0E2A44; box-shadow: inset 0 0 0 1px #38BDF8, 0 0 12px rgba(56,189,248,.35);}
+    div[data-testid="stTabs"] button[aria-selected="true"] p {color:#FFFFFF !important; text-shadow:none !important;}
+    div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] {display:none;}
+    .stButton > button[kind="primary"] {background:#38BDF8; color:#04121F; font-weight:600; border:none;
+           box-shadow:0 0 14px rgba(56,189,248,.45);}
+    .stButton > button:hover, .stDownloadButton > button:hover {box-shadow:0 0 14px rgba(56,189,248,.5); border-color:#38BDF8;}
+    .lesson {background:#0A1A2E !important; border:1px solid #17406A !important; border-left:4px solid #38BDF8 !important;
+           color:#D6EEFF !important;}
+    .lesson b, .lesson strong {color:#7DD3FC;}
+    .good {background:#08201F !important; border-left-color:#5EEAD4 !important; color:#CCFBF1 !important;}
+    div[data-testid="stPlotlyChart"], div[data-testid="stGraphVizChart"], div[data-testid="stDataFrame"],
+    div[data-testid="stExpander"] {background:#09121F !important; border:1px solid #17406A !important; box-shadow:none !important;}
+    div[data-testid="stCode"] pre {background:#06101E !important; border:1px solid #17406A;}
+    hr {border-color:#17406A !important;}
+    ::-webkit-scrollbar {width:10px; height:10px;}
+    ::-webkit-scrollbar-track {background:#050A14;}
+    ::-webkit-scrollbar-thumb {background:#1E5A85; border-radius:10px;}
+    ::selection {background:rgba(56,189,248,.35); color:#fff;}
     </style>"""
     st.markdown(_css, unsafe_allow_html=True)
 
@@ -188,7 +217,7 @@ def gv(dot: str, **kw):
     """Graphviz with theme colors swapped in."""
     for a, b in {"#111A2E": T["panel"], "#2B3D63": T["border"], "#1C2340": T["h2"], "#38BDF8": T["acc"],
                  "#E8EEF7": T["text"], "#7DD3FC": T["acc2"], "#B6C2D6": T["muted"], "#64748B": T["muted"],
-                 "#C084FC": MAGENTA, "#34D399": GREEN, "#FBBF24": AMBER}.items():
+                 "#C084FC": MAGENTA, "#34D399": GREEN, "#FBBF24": (T["acc2"] if T["glow"] else AMBER)}.items():
         dot = dot.replace(a, b)
     # natural size: a 'stretch' graph inside a hidden tab is measured at 0 px and renders blank
     kw.pop("width", None)
