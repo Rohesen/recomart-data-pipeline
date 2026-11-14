@@ -41,7 +41,7 @@ def apply():
                          acc="#4F46E5", acc2="#0284C7", acc_rgb="79,70,229", title="#3730A3", text="#1E1B4B", head="#0F0B33",
                          sub="#4338CA", muted="#5B5F86", glass=.55, colorway=["#4F46E5","#0284C7","#DB2777","#059669","#D97706","#7C3AED"]),
     }
-    SKIN_DEFAULT = "aurora"
+    SKIN_DEFAULT = "midnight"
     try:
         _q = st.query_params.get("skin")
     except Exception:
