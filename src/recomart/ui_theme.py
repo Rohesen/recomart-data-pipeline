@@ -262,6 +262,55 @@ def apply():
     .tm .tn {font-weight:600; color:%(head)s; font-size:.92rem; line-height:1.25;}
     .tm .tid {font-family:'JetBrains Mono', monospace; font-size:.74rem !important;}
     .tm .tpart {font-size:.78rem !important; line-height:1.35; display:block; margin-top:2px;}
+    [data-testid="stTabs"] [role="tablist"] {gap:4px; background:rgba(255,255,255,.035); padding:5px; border:1px solid %(gb)s;
+           border-radius:14px; width:fit-content; max-width:100%%; flex-wrap:wrap;}
+    [data-testid="stTab"] {border-radius:10px !important; padding:8px 16px !important; margin:0 !important; transition:background .2s ease;}
+    [data-testid="stTab"]:hover {background:rgba(255,255,255,.05);}
+    [data-testid="stTab"][aria-selected="true"] {background:rgba(%(acc_rgb)s,.16) !important; box-shadow: inset 0 0 0 1px rgba(%(acc_rgb)s,.5);}
+    [data-testid="stTab"] p {font-weight:600 !important;}
+    [data-testid="stTab"][aria-selected="true"] p {color:%(head)s !important;}
+    [data-testid="stTabs"] [role="tablist"] ~ div:not([role="tabpanel"]) {display:none !important;}
+    [data-testid="stTab"]:after, [data-testid="stTab"]:before {display:none !important;}
+    div[data-testid="stDataFrame"] {border-radius:14px !important; overflow:hidden;}
+    .banner {display:flex; gap:18px; align-items:center; padding:20px 24px; border-radius:20px; margin:6px 0 18px;
+           background:linear-gradient(120deg, color-mix(in srgb, var(--c) 16%%, transparent), rgba(255,255,255,.03)) !important;
+           border:1px solid color-mix(in srgb, var(--c) 45%%, transparent); position:relative; overflow:hidden;}
+    .banner .av {width:52px; height:52px; font-size:1rem;}
+    .banner .who-l {font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--c); font-weight:700;}
+    .banner h2 {margin:2px 0 4px !important; padding:0 !important; font-size:1.55rem !important;}
+    .banner p {margin:0 !important; color:%(muted)s !important; font-size:.95rem;}
+    .reco-grid {display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px;}
+    .reco {position:relative; padding:16px 16px 14px; border-radius:16px; background:linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+           border:1px solid %(gb)s; transition: transform .2s ease, border-color .2s ease;}
+    .reco:hover {transform:translateY(-3px); border-color:rgba(%(acc_rgb)s,.6);}
+    .reco .rk {position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%%; display:flex; align-items:center;
+           justify-content:center; font-size:.78rem; font-weight:700; color:#0B1020; background:var(--c);}
+    .reco .cat {display:inline-block; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--c);
+           border:1px solid color-mix(in srgb, var(--c) 50%%, transparent); border-radius:20px; padding:2px 9px;}
+    .reco .t {font-weight:600; color:%(head)s; font-size:1rem; margin:8px 34px 6px 0; line-height:1.3;}
+    .reco .meta {display:flex; gap:12px; font-size:.85rem; color:%(muted)s; align-items:center;}
+    .reco .price {color:%(head)s; font-weight:700; font-size:1.05rem;}
+    .reco .star {color:#FCD34D;}
+    .reco .why {margin-top:10px; font-size:.8rem; color:%(text)s; background:rgba(255,255,255,.05); border-radius:10px; padding:6px 10px;}
+    .chips {display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 12px;}
+    .chip {font-size:.8rem; padding:4px 10px; border-radius:20px; background:rgba(255,255,255,.06); border:1px solid %(gb)s; color:%(text)s;}
+    .chip b {color:var(--c, %(acc)s); font-weight:600;}
+    .foot {margin-top:40px; padding:22px 26px; border-radius:18px; border:1px solid %(gb)s; background:rgba(255,255,255,.03);
+           display:flex; flex-wrap:wrap; gap:18px; align-items:center; justify-content:space-between;}
+    .foot .avs {display:flex;} .foot .avs .av {width:30px; height:30px; font-size:.7rem; margin-left:-6px; box-shadow:0 0 0 2px #0A0D16;}
+    .foot .tx {color:%(muted)s; font-size:.82rem; line-height:1.5;} .foot a {color:%(acc)s !important; text-decoration:none;}
+    .boot {max-width:560px; margin:12vh auto 0; padding:30px 32px; border-radius:22px; border:1px solid %(gb)s;
+           background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02));}
+    .boot h3 {margin:0 0 6px !important; padding-left:0 !important;} .boot h3:before {display:none;}
+    .boot p {color:%(muted)s !important;}
+    .flow {display:flex; flex-wrap:nowrap; align-items:stretch; gap:6px; overflow-x:auto; padding:18px; border-radius:18px;
+           border:1px solid %(gb)s; background:rgba(255,255,255,.03);}
+    .flow .fn {flex:1 1 0; min-width:86px; padding:12px 10px 10px; border-radius:14px; background:rgba(255,255,255,.04);
+           border:1px solid color-mix(in srgb, var(--c) 55%%, transparent); border-top:3px solid var(--c);}
+    .flow .fs {color:var(--c); font-size:1rem; line-height:1;} .flow .ft {color:%(head)s; font-weight:700; font-size:.88rem; margin-top:6px; word-break:keep-all; overflow-wrap:normal;}
+    .flow .fd {color:%(muted)s; font-size:.76rem; margin-top:3px; line-height:1.3;}
+    .flow .arr {align-self:center; color:%(muted)s; font-size:1.1rem;}
+    [data-testid="stTab"] {border-bottom:none !important;}
     ::-webkit-scrollbar {width:10px; height:10px;} ::-webkit-scrollbar-track {background:transparent;}
     ::-webkit-scrollbar-thumb {background:rgba(%(acc_rgb)s,.6); border-radius:10px;}
     </style>""" % dict(grad=S["grad"], blobs=_blobs, gs=(.35 if LIGHT else .04), gb=_gb, gt=_gt, sh=_sh,
@@ -277,6 +326,7 @@ def apply():
         def _themed_plotly_chart(self, fig, *args, **kwargs):
             """Use our own Plotly template instead of Streamlit's (which follows the app's dark base)."""
             kwargs.setdefault("theme", None)
+            kwargs.setdefault("config", {"displayModeBar": False})
             return _orig_plotly_chart(self, fig, *args, **kwargs)
 
         _themed_plotly_chart._themed = True
@@ -298,3 +348,36 @@ def gv(dot: str, **kw):
     st.graphviz_chart(dot, width="content")
 
 
+
+
+PALETTE = ["#93C5FD", "#C4B5FD", "#86EFAC", "#FCD34D", "#F9A8D4", "#67E8F9"]
+
+
+def style_fig(fig, height=None, title=None, legend=True):
+    """One consistent chart style: rounded bars, soft grid, readable hover, legend on top."""
+    grid = "rgba(15,23,42,.08)" if LIGHT else "rgba(255,255,255,.06)"
+    fig.update_layout(**PLOT)
+    fig.update_layout(barcornerradius=6, bargap=0.28, bargroupgap=0.08,
+                      hoverlabel=dict(bgcolor="#11162A" if not LIGHT else "#FFFFFF", bordercolor=T["acc"],
+                                      font=dict(family="Inter, sans-serif", size=12, color=T["text"])),
+                      legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1,
+                                  bgcolor="rgba(0,0,0,0)", title_text="") if legend else dict(),
+                      showlegend=legend)
+    if title is not None:
+        fig.update_layout(title=dict(text=title, x=0.01, xanchor="left", font=dict(size=15, color=T["head"])))
+    if height:
+        fig.update_layout(height=height)
+    fig.update_xaxes(gridcolor=grid, zeroline=False, linecolor=grid, tickfont=dict(color=MUTED))
+    fig.update_yaxes(gridcolor=grid, zeroline=False, linecolor=grid, tickfont=dict(color=MUTED))
+    return fig
+
+
+def status_style(df, cols=("status",)):
+    """Colour PASS/WARN/FAIL (and success/failed) cells in a dataframe."""
+    colors = {"PASS": "#86EFAC", "success": "#86EFAC", "WARN": "#FCD34D", "FAIL": "#FB7185", "failed": "#FB7185"}
+
+    def _c(v):
+        c = colors.get(str(v))
+        return f"color:{c}; font-weight:600" if c else ""
+    present = [c for c in cols if c in df.columns]
+    return df.style.map(_c, subset=present).format(precision=2) if present else df
