@@ -157,7 +157,7 @@ def apply():
            background:linear-gradient(90deg,#0EA5E9,#7DD3FC,#E0F2FE,#38BDF8,#0EA5E9); background-size:300% 100%;
            animation:flow 7s linear infinite;}
     @keyframes flow {0%{background-position:0% 0} 100%{background-position:300% 0}}
-    .hero h1 {color:#FFFFFF !important; text-shadow:none !important;}
+    .hero h1 {color:#7DD3FC !important; text-shadow:none !important;}
     .hero h1 a, h1 a, h2 a, h3 a, [data-testid="stHeaderActionElements"] {display:none !important;}
     .hero p {color:#C9D7E8 !important; opacity:1 !important;}
     h2 {color:#F0F9FF !important; text-shadow:none !important;} h3 {color:#7DD3FC !important; text-shadow:none !important;}
