@@ -77,7 +77,6 @@ def load_json(p: str):
 
 # ---------------------------------------------------------------- sidebar
 with st.sidebar:
-    st.selectbox("Theme", list(ui.THEMES), key="theme")
     st.markdown("### RecoMart Data Pipeline")
     st.caption("DSE ZG529 · Data Management for ML\nExperiential Learning Assignment (EC1)")
     st.markdown("**Team**")

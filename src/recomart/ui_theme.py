@@ -1,4 +1,4 @@
-"""Shared Streamlit theme system (9 themes: dark, neon and light; default Light · Paper)."""
+"""Streamlit theme: a single dark theme with sky-blue neon accents."""
 # flake8: noqa
 import streamlit as st
 
@@ -10,49 +10,21 @@ def apply():
     _D = dict(mode="dark", lesson="#FDE9B0", good="#C8F5E2", bad="#FBD0D0", on_acc="#0B0F14", glow=False)
     _L = dict(mode="light", lesson="#7A5300", good="#065F46", bad="#9F1239", on_acc="#FFFFFF", glow=False)
     THEMES = {
-        "Deep Ocean":      {**_D, **dict(bg="#06181D", side="#081F25", panel="#0C2830", panel2="#0A222A", border="#1B4550",
-                               acc="#2DD4BF", acc2="#7DD3FC", acc_rgb="45,212,191", h1="#0C2A33", h2="#124350",
-                               text="#E6F2F2", head="#F4FBFB", sub="#99F6E4", muted="#8FB3B8")},
-        "Neon Glow":       {**_D, **dict(bg="#070B14", side="#0A0F1C", panel="#0E1424", panel2="#0B1120", border="#1E2A44",
-                               acc="#00F0FF", acc2="#FF2BD6", acc_rgb="0,240,255", h1="#1A0F2E", h2="#0B2A3A",
-                               text="#E6F1FF", head="#FFFFFF", sub="#7DF9FF", muted="#8892B0", glow=True)},
-        "Midnight Navy":   {**_D, **dict(bg="#0B1220", side="#0E172A", panel="#111A2E", panel2="#0F1829", border="#22304D",
-                               acc="#38BDF8", acc2="#A5B4FC", acc_rgb="56,189,248", h1="#13203A", h2="#1C2F52",
-                               text="#E8EEF7", head="#F1F5FB", sub="#BFDBFE", muted="#94A3B8")},
-        "Royal Plum":      {**_D, **dict(bg="#130B1D", side="#170E25", panel="#1D1430", panel2="#1A1129", border="#3A2858",
-                               acc="#C084FC", acc2="#F0ABFC", acc_rgb="192,132,252", h1="#22153A", h2="#352058",
-                               text="#F1EAFB", head="#FAF5FF", sub="#E9D5FF", muted="#A99BC0")},
-        "Graphite & Gold": {**_D, **dict(bg="#111214", side="#15161A", panel="#1B1D22", panel2="#18191D", border="#30333B",
-                               acc="#E2B55A", acc2="#F5D58A", acc_rgb="226,181,90", h1="#1D1F25", h2="#2C2F37",
-                               text="#ECEAE4", head="#FAF8F2", sub="#F5DFA8", muted="#A3A09A")},
-        "Emerald":         {**_D, **dict(bg="#06150E", side="#081B12", panel="#0D2419", panel2="#0B2016", border="#1D4430",
-                               acc="#34D399", acc2="#A7F3D0", acc_rgb="52,211,153", h1="#0D2A1C", h2="#14432D",
-                               text="#E6F4EC", head="#F3FBF6", sub="#BBF7D0", muted="#8DB09C")},
-        "Light · Paper":   {**_L, **dict(bg="#FAFAF7", side="#F2F1EC", panel="#FFFFFF", panel2="#FBFBF8", border="#D6D3CC",
-                               acc="#3F3F46", acc2="#18181B", acc_rgb="63,63,70", h1="#FFFFFF", h2="#F1EFEA",
-                               text="#1C1917", head="#0C0A09", sub="#27272A", muted="#71717A")},
-        "Light · Classic": {**_L, **dict(bg="#F5F7FB", side="#EEF2F8", panel="#FFFFFF", panel2="#F8FAFD", border="#D9E1EC",
-                               acc="#1D4ED8", acc2="#1E40AF", acc_rgb="29,78,216", h1="#FFFFFF", h2="#E8EFFC",
-                               text="#1E293B", head="#0F172A", sub="#1E3A8A", muted="#64748B")},
-        "Light · Ivory":   {**_L, **dict(bg="#FAF7F0", side="#F3EEE2", panel="#FFFDF8", panel2="#FBF8F1", border="#E4DCC8",
-                               acc="#9A6B12", acc2="#1E3A5F", acc_rgb="154,107,18", h1="#FFFDF8", h2="#F4EBD6",
-                               text="#2B2A26", head="#1C1B18", sub="#1E3A5F", muted="#7A7466")},
-        "Light · Sky":     {**_L, **dict(bg="#F1F8FC", side="#E6F2F9", panel="#FFFFFF", panel2="#F6FBFE", border="#CFE3EE",
-                               acc="#0369A1", acc2="#0E7490", acc_rgb="3,105,161", h1="#FFFFFF", h2="#DCEFF9",
-                               text="#0F2A3A", head="#0B1F2C", sub="#075985", muted="#5B7486")},
+        "Sky Neon": {**_D, **dict(bg="#050A14", side="#07101F", panel="#0B1526", panel2="#09121F", border="#1A3350",
+                         acc="#38BDF8", acc2="#7DD3FC", acc_rgb="56,189,248", h1="#0A1A2E", h2="#0E2A44",
+                         text="#E6F3FF", head="#FFFFFF", sub="#7DD3FC", muted="#8CA3BF", glow=True)},
     }
-    st.session_state.setdefault("theme", "Light · Paper")
-    THEME_NAME = st.session_state["theme"]
-    T = THEMES.get(THEME_NAME, THEMES["Deep Ocean"])
+    THEME_NAME = "Sky Neon"   # single theme: dark background with sky-blue neon
+    T = THEMES[THEME_NAME]
     LIGHT = T["mode"] == "light"
 
     NAVY, TEAL = T["text"], T["acc"]
     AMBER, RED, GREEN, GREY = ("#D97706", "#DC2626", "#059669", "#7C3AED") if LIGHT else ("#FBBF24", "#F87171", "#34D399", "#A78BFA")
-    if THEME_NAME == "Neon Glow":
-        AMBER, RED, GREEN, GREY = "#FFC300", "#FF3B6B", "#39FF88", "#B26BFF"
+    if T["glow"]:
+        AMBER, RED, GREEN, GREY = "#FCD34D", "#FB7185", "#5EEAD4", "#A5B4FC"
     if THEME_NAME == "Light · Paper":   # muted, print-friendly data colours
         AMBER, RED, GREEN, GREY = "#B45309", "#B91C1C", "#3F6212", "#A8A29E"
-    MAGENTA = "#9A3412" if THEME_NAME == "Light · Paper" else "#C026D3" if LIGHT else ("#FF2BD6" if T["glow"] else "#C084FC")
+    MAGENTA = "#9A3412" if THEME_NAME == "Light · Paper" else "#C026D3" if LIGHT else ("#818CF8" if T["glow"] else "#C084FC")
     BG, PANEL, BORDER, MUTED = T["bg"], T["panel"], T["border"], T["muted"]
     PLOT = dict(template="plotly_white" if LIGHT else "plotly_dark", paper_bgcolor="rgba(0,0,0,0)",
                 plot_bgcolor=T["panel2"], font=dict(family="Inter, Segoe UI, sans-serif", color=NAVY, size=13),
@@ -163,33 +135,34 @@ def apply():
         _css += """<style>
     [data-testid="stSlider"], [data-testid="stCheckbox"], .stToggle, [data-testid="stMultiSelect"] span {filter: grayscale(1);}
     </style>"""
-    if T["glow"]:   # neon: glows, animated rainbow edge, glowing numbers and cards
+    if T["glow"]:   # sky-blue neon: soft glows on headings, numbers, cards, tabs and buttons
         _css += """<style>
-    .hero {background: linear-gradient(115deg, rgba(255,43,214,.20), rgba(157,78,221,.16) 45%, rgba(0,240,255,.20));
-           border:1px solid rgba(0,240,255,.45); box-shadow: 0 0 28px rgba(0,240,255,.25), inset 0 0 40px rgba(255,43,214,.10);
-           position:relative; overflow:hidden; border-top:1px solid rgba(0,240,255,.45);}
+    .stApp {background: radial-gradient(1000px 520px at 0% -10%, rgba(56,189,248,.16), transparent 60%),
+                        radial-gradient(900px 480px at 100% 0%, rgba(14,165,233,.10), transparent 55%), #050A14 !important;}
+    section[data-testid="stSidebar"] {border-right:1px solid rgba(56,189,248,.35); box-shadow: 0 0 24px rgba(56,189,248,.12);}
+    .hero {background: linear-gradient(115deg, rgba(14,165,233,.22), rgba(56,189,248,.08) 50%, rgba(125,211,252,.18));
+           border:1px solid rgba(56,189,248,.55); box-shadow: 0 0 30px rgba(56,189,248,.30), inset 0 0 40px rgba(56,189,248,.10);
+           position:relative; overflow:hidden;}
     .hero:before {content:""; position:absolute; left:0; right:0; top:0; height:3px;
-           background:linear-gradient(90deg,#FF2BD6,#00F0FF,#39FF88,#FF2BD6); background-size:300% 100%;
-           animation:flow 8s linear infinite;}
+           background:linear-gradient(90deg,#0EA5E9,#7DD3FC,#E0F2FE,#38BDF8,#0EA5E9); background-size:300% 100%;
+           animation:flow 7s linear infinite; box-shadow:0 0 12px #38BDF8;}
     @keyframes flow {0%{background-position:0% 0} 100%{background-position:300% 0}}
-    .hero h1 {text-shadow:0 0 10px #00F0FF, 0 0 26px rgba(255,43,214,.55);}
-    h2 {text-shadow:0 0 18px rgba(0,240,255,.35);} h3 {text-shadow:0 0 12px rgba(0,240,255,.4);}
-    .pill {box-shadow:0 0 10px rgba(0,240,255,.35); color:#7DF9FF;}
-    .pill.m {border-color:#FF2BD6; color:#FF7BE5; box-shadow:0 0 10px rgba(255,43,214,.35);}
-    .pill.g {border-color:#39FF88; color:#8CFFC0; box-shadow:0 0 10px rgba(57,255,136,.35);}
-    .pill.y {border-color:#FFC300; color:#FFE07A; box-shadow:0 0 10px rgba(255,195,0,.35);}
-    .kpi {border-top:2px solid #00F0FF; border-left:1px solid var(--border); box-shadow:0 0 16px rgba(0,240,255,.15);}
-    .kpi:nth-child(odd) {border-top-color:#FF2BD6;}
-    .kpi .v {text-shadow:0 0 12px rgba(0,240,255,.6);}
-    .card h4 {text-shadow:0 0 8px rgba(255,43,214,.5);}
-    .card:hover, .kpi:hover {border-color:#FF2BD6; box-shadow:0 0 24px rgba(255,43,214,.4);}
-    .owner {box-shadow:0 0 12px rgba(0,240,255,.4);}
-    div[data-baseweb="tab-highlight"] {background:linear-gradient(90deg,#FF2BD6,#00F0FF) !important; box-shadow:0 0 12px #00F0FF;}
-    div[data-testid="stTabs"] button[aria-selected="true"] p {text-shadow:0 0 10px rgba(0,240,255,.7);}
-    .stButton > button[kind="primary"] {background:linear-gradient(90deg,#FF2BD6,#9D4EDD 50%,#00F0FF); color:#fff;
-           border:none; box-shadow:0 0 18px rgba(255,43,214,.45);}
-    .stButton > button:hover {box-shadow:0 0 18px rgba(0,240,255,.55);}
-    div[data-testid="stPlotlyChart"], div[data-testid="stGraphVizChart"] {box-shadow:0 0 18px rgba(0,240,255,.12);}
+    .hero h1 {color:#F0F9FF !important; text-shadow:0 0 8px #38BDF8, 0 0 24px rgba(56,189,248,.65);}
+    h2 {text-shadow:0 0 16px rgba(56,189,248,.45);} h3 {text-shadow:0 0 12px rgba(56,189,248,.5);}
+    .pill, .pill.m, .pill.g, .pill.y {border-color:#38BDF8 !important; color:#BAE6FD !important; background:rgba(56,189,248,.08);
+           box-shadow:0 0 10px rgba(56,189,248,.40);}
+    .kpi {border-top:2px solid #38BDF8; border-left:1px solid var(--border); box-shadow:0 0 16px rgba(56,189,248,.18);}
+    .kpi .v {color:#E0F2FE; text-shadow:0 0 12px rgba(56,189,248,.8);}
+    .card h4 {text-shadow:0 0 8px rgba(56,189,248,.6);}
+    .card:hover, .kpi:hover {border-color:#7DD3FC; box-shadow:0 0 26px rgba(56,189,248,.45);}
+    .owner {box-shadow:0 0 12px rgba(56,189,248,.45);}
+    div[data-baseweb="tab-highlight"] {background:linear-gradient(90deg,#0EA5E9,#7DD3FC) !important; box-shadow:0 0 12px #38BDF8;}
+    div[data-testid="stTabs"] button[aria-selected="true"] p {color:#E0F2FE; text-shadow:0 0 10px rgba(56,189,248,.8);}
+    .stButton > button[kind="primary"] {background:linear-gradient(90deg,#0284C7,#38BDF8); color:#04121F; font-weight:600;
+           border:none; box-shadow:0 0 18px rgba(56,189,248,.55);}
+    .stButton > button:hover, .stDownloadButton > button:hover {box-shadow:0 0 18px rgba(56,189,248,.6); border-color:#38BDF8;}
+    div[data-testid="stPlotlyChart"], div[data-testid="stGraphVizChart"], div[data-testid="stDataFrame"]
+           {box-shadow:0 0 18px rgba(56,189,248,.14);}
     </style>"""
     st.markdown(_css, unsafe_allow_html=True)
 
