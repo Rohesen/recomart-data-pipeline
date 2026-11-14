@@ -82,6 +82,26 @@ def initials(name):
     return (parts[0][0] + parts[-1][0]).upper()
 
 
+PHOTOS = ["rohesen", "akriti", "chelsa", "amogh"]   # same order as TEAM
+
+
+@st.cache_data(show_spinner=False)
+def _photo_uri(i):
+    f = ROOT / "assets" / "team" / f"{PHOTOS[i]}.jpg"
+    if not f.exists():
+        return ""
+    import base64
+    return "data:image/jpeg;base64," + base64.b64encode(f.read_bytes()).decode()
+
+
+def avatar(i):
+    m, uri = TEAM[i], _photo_uri(i)
+    if uri:
+        return (f'<div class="av photo" style="--c:{STAGE_COLORS[i]};background-image:url({uri})" '
+                f'title="{m["name"]}"></div>')
+    return f'<div class="av" style="--c:{STAGE_COLORS[i]}">{initials(m["name"])}</div>'
+
+
 def kpi(col, value, label):
     col.markdown(f'<div class="kpi"><div class="v">{value}</div><div class="l">{label}</div></div>', unsafe_allow_html=True)
 
@@ -93,8 +113,8 @@ def owner(i):
 
 def banner(i, title, goal):
     m = TEAM[i]
-    st.markdown(f'<div class="banner" style="--c:{STAGE_COLORS[i]}"><div class="av" style="--c:{STAGE_COLORS[i]}">'
-                f'{initials(m["name"])}</div><div><div class="who-l">{m["member"]} · {m["name"]} · {m["id"]}</div>'
+    st.markdown(f'<div class="banner" style="--c:{STAGE_COLORS[i]}">'
+                f'{avatar(i)}<div><div class="who-l">{m["member"]} · {m["name"]} · {m["id"]}</div>'
                 f'<h2>{title}</h2><p>{goal}</p></div></div>', unsafe_allow_html=True)
 
 
@@ -189,7 +209,7 @@ with st.sidebar:
     st.caption("DSE ZG529 · Data Management for ML\nExperiential Learning Assignment (EC1)")
     st.markdown('<div class="sb-label">Team</div>', unsafe_allow_html=True)
     for i, m in enumerate(TEAM):
-        st.markdown(f'<div class="tm"><div class="av" style="--c:{STAGE_COLORS[i]}">{initials(m["name"])}</div>'
+        st.markdown(f'<div class="tm">{avatar(i)}'
                     f'<div><div class="tn">{m["name"]}</div><div class="tid">{m["id"]}</div>'
                     f'<div class="tpart">{m["part"]}</div></div></div>', unsafe_allow_html=True)
     st.divider()
@@ -245,7 +265,7 @@ with tabs[0]:
     wc = st.columns(4)
     for i, m in enumerate(TEAM):
         wc[i].markdown(f'<div class="card who" style="--c:{STAGE_COLORS[i]}">'
-                       f'<div class="av" style="--c:{STAGE_COLORS[i]}">{initials(m["name"])}</div><div>'
+                       f'{avatar(i)}<div>'
                        f'<h4>{"①②③④"[i]} {m["part"]}</h4>'
                        f'<p>{m["name"]}<br><span class="mono">{m["id"]}</span></p></div></div>',
                        unsafe_allow_html=True)
@@ -549,7 +569,7 @@ with tabs[4]:
         st.dataframe(pd.DataFrame(read_audit(200)).iloc[::-1], hide_index=True, width="stretch")
 
 st.markdown('<div class="foot"><div style="display:flex;gap:16px;align-items:center"><div class="avs">' + "".join(
-    f'<div class="av" style="--c:{STAGE_COLORS[i]}">{initials(m["name"])}</div>' for i, m in enumerate(TEAM)) +
+    avatar(i) for i, m in enumerate(TEAM)) +
     '</div><div class="tx"><b style="color:var(--head)">RecoMart Data Pipeline</b><br>' +
     " · ".join(m["name"] for m in TEAM) + '</div></div><div class="tx" style="text-align:right">'
     'DSE ZG529 · Data Management for Machine Learning · BITS Pilani WILP<br>Built with Prefect · MLflow · DVC · '

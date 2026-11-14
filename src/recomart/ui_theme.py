@@ -314,6 +314,11 @@ def apply():
     [data-testid="stSidebarHeader"] {height:2.4rem !important; min-height:0 !important; padding:.4rem .75rem 0 !important; margin-bottom:0 !important;}
     [data-testid="stSidebarUserContent"] {padding-top:0 !important;}
     section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] > div > div > div:first-child h3 {margin-top:0 !important; padding-top:0 !important;}
+    .av.photo {background-size:cover; background-position:center; color:transparent; box-shadow:0 0 0 2px var(--c), 0 0 0 5px rgba(255,255,255,.04) !important;}
+    .card.who .av.photo {width:58px; height:58px;}
+    .banner .av.photo {width:76px; height:76px;}
+    .tm .av.photo {width:46px; height:46px;}
+    .foot .avs .av.photo {width:34px; height:34px; box-shadow:0 0 0 2px #0A0D16, 0 0 0 3px var(--c) !important;}
     ::-webkit-scrollbar {width:10px; height:10px;} ::-webkit-scrollbar-track {background:transparent;}
     ::-webkit-scrollbar-thumb {background:rgba(%(acc_rgb)s,.6); border-radius:10px;}
     </style>""" % dict(grad=S["grad"], blobs=_blobs, gs=(.35 if LIGHT else .04), gb=_gb, gt=_gt, sh=_sh,
