@@ -1,0 +1,13 @@
+# Raw data lake storage configuration.
+# The same partition layout is used for both backends:
+#   <root>/raw/source=<source>/type=<type>/ingest_date=YYYY-MM-DD/<file>
+backend: local
+
+local:
+  root: data/lake
+
+s3:                      # optional: set backend: s3 and install boto3
+  bucket: recomart-data-lake
+  prefix: lake
+  region: ap-south-1
+  # credentials come from the standard AWS chain (env vars / ~/.aws / IAM role) - never stored here

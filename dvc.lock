@@ -1,0 +1,222 @@
+schema: '2.0'
+stages:
+  ingest:
+    cmd: python -m recomart.pipeline --stage ingest
+    deps:
+    - path: data/landing
+      hash: md5
+      md5: 8520f107c4f35e7702d0517284470285.dir
+      size: 7984855
+      nfiles: 270
+    - path: src/recomart/ingestion.py
+      hash: md5
+      md5: a94850e3b4ac5e590172361d252817e0
+      size: 7001
+    - path: src/recomart/storage.py
+      hash: md5
+      md5: 40193938184fbaa6adebc43f2b786f25
+      size: 4460
+    params:
+      configs/pipeline.yaml:
+        ingestion:
+          max_retries: 4
+          backoff_seconds: 0.5
+          timeout_seconds: 5
+          schedule_minutes: 60
+          api_failure_rate: 0.25
+        sources:
+          clickstream:
+            kind: file
+            landing_dir: data/landing/clickstream
+            pattern: clickstream_*.csv
+          transactions:
+            kind: file
+            landing_dir: data/landing/transactions
+            pattern: transactions_*.csv
+          ratings:
+            kind: file
+            landing_dir: data/landing/ratings
+            pattern: ratings_*.csv
+          users:
+            kind: file
+            landing_dir: data/landing/users
+            pattern: users_*.csv
+          catalog_api:
+            kind: rest
+            base_url: http://127.0.0.1:8765
+            endpoint: /products
+            page_size: 100
+          popularity_api:
+            kind: rest
+            base_url: http://127.0.0.1:8765
+            endpoint: /popularity
+    outs:
+    - path: data/lake/raw
+      hash: md5
+      md5: e891734683223453e65342fcf28e7532.dir
+      size: 8235996
+      nfiles: 273
+  validate:
+    cmd: python -m recomart.pipeline --stage validate
+    deps:
+    - path: data/lake/raw
+      hash: md5
+      md5: e891734683223453e65342fcf28e7532.dir
+      size: 8235996
+      nfiles: 273
+    - path: src/recomart/validation.py
+      hash: md5
+      md5: aa48e8ad704e1b3c38f28010bb969fc7
+      size: 8651
+    params:
+      configs/pipeline.yaml:
+        validation:
+          rating_min: 1
+          rating_max: 5
+          max_missing_pct: 2.0
+          max_duplicate_pct: 1.0
+    outs:
+    - path: reports/dq
+      hash: md5
+      md5: 776cfb49316a02b6a02c9614687f070c.dir
+      size: 62094
+      nfiles: 2
+  prepare:
+    cmd: python -m recomart.pipeline --stage prepare
+    deps:
+    - path: data/lake/raw
+      hash: md5
+      md5: e891734683223453e65342fcf28e7532.dir
+      size: 8235996
+      nfiles: 273
+    - path: reports/dq
+      hash: md5
+      md5: 776cfb49316a02b6a02c9614687f070c.dir
+      size: 62094
+      nfiles: 2
+    - path: src/recomart/preparation.py
+      hash: md5
+      md5: 1201c2614c81046815d813423615170d
+      size: 7478
+    outs:
+    - path: data/lake/quarantine
+      hash: md5
+      md5: 8d762f1a8bf0618c1197300ee7b6395c.dir
+      size: 47986
+      nfiles: 3
+    - path: data/processed
+      hash: md5
+      md5: 7c46dfd343815b48abe01521b883fc0f.dir
+      size: 4541718
+      nfiles: 7
+  eda:
+    cmd: python -m recomart.pipeline --stage eda
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 7c46dfd343815b48abe01521b883fc0f.dir
+      size: 4541718
+      nfiles: 7
+    - path: src/recomart/eda.py
+      hash: md5
+      md5: 9745fd568e9230ee05d155c2c79d0140
+      size: 6429
+    outs:
+    - path: reports/figures
+      hash: md5
+      md5: 014c8f597c5e5cd0e06cc78c1db3b3f0.dir
+      size: 448615
+      nfiles: 8
+  transform:
+    cmd: python -m recomart.pipeline --stage transform
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 7c46dfd343815b48abe01521b883fc0f.dir
+      size: 4541718
+      nfiles: 7
+    - path: sql
+      hash: md5
+      md5: 20ccf5c7a497b5af618fd27d9850837e.dir
+      size: 9573
+      nfiles: 4
+    - path: src/recomart/transform.py
+      hash: md5
+      md5: 8afc8325ac68c5e7e32419d260e2b0c4
+      size: 5325
+    outs:
+    - path: data/warehouse
+      hash: md5
+      md5: 5b3266763d557d13d6e32bb348e40f00.dir
+      size: 22904832
+      nfiles: 1
+  features:
+    cmd: python -m recomart.pipeline --stage features
+    deps:
+    - path: data/warehouse
+      hash: md5
+      md5: 5b3266763d557d13d6e32bb348e40f00.dir
+      size: 22904832
+      nfiles: 1
+    - path: src/recomart/feature_store.py
+      hash: md5
+      md5: 4d0c2ebedd6e722d4ba8109f783ae71b
+      size: 11684
+    params:
+      configs/pipeline.yaml:
+        features:
+          windows_days:
+          - 7
+          - 30
+          cooccurrence_top_n: 20
+    outs:
+    - path: data/feature_store
+      hash: md5
+      md5: 5051ce1d9c72ed3aee02ef3e4dead957.dir
+      size: 2389395
+      nfiles: 50
+  train:
+    cmd: python -m recomart.pipeline --stage train
+    deps:
+    - path: data/feature_store
+      hash: md5
+      md5: f01e0e2f06abd76cb04863856f18b5c3.dir
+      size: 2440779
+      nfiles: 51
+    - path: data/processed
+      hash: md5
+      md5: 7c46dfd343815b48abe01521b883fc0f.dir
+      size: 4541718
+      nfiles: 7
+    - path: src/recomart/models.py
+      hash: md5
+      md5: 32f9cce36c19b32fc948eb0f580a8cdd
+      size: 6117
+    - path: src/recomart/train.py
+      hash: md5
+      md5: 3d076eb7da7abc26aae412c01c70aef2
+      size: 8931
+    params:
+      configs/pipeline.yaml:
+        training:
+          test_days: 14
+          k: 10
+          min_train_interactions: 3
+          event_weights:
+            view: 1.0
+            wishlist: 2.0
+            add_to_cart: 3.0
+            purchase: 5.0
+          models:
+            popularity: {}
+            svd:
+              n_factors: 48
+            content: {}
+            hybrid:
+              n_factors: 48
+              alpha: 0.7
+    outs:
+    - path: reports/model_metrics.json
+      hash: md5
+      md5: 4d9e8d72e8c5848e2d2c574c25d91297
+      size: 1373

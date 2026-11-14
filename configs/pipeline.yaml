@@ -1,0 +1,71 @@
+# RecoMart data pipeline configuration (single source of truth for every stage)
+project: recomart
+seed: 42
+
+sources:
+  clickstream:       # web + mobile event logs, dropped as daily CSV files
+    kind: file
+    landing_dir: data/landing/clickstream
+    pattern: "clickstream_*.csv"
+  transactions:      # purchase history from the order system, daily CSV files
+    kind: file
+    landing_dir: data/landing/transactions
+    pattern: "transactions_*.csv"
+  ratings:           # product reviews / ratings, daily CSV files
+    kind: file
+    landing_dir: data/landing/ratings
+    pattern: "ratings_*.csv"
+  users:             # CRM export of user profiles (daily snapshot CSV)
+    kind: file
+    landing_dir: data/landing/users
+    pattern: "users_*.csv"
+  catalog_api:       # product metadata from the catalog service (REST)
+    kind: rest
+    base_url: http://127.0.0.1:8765
+    endpoint: /products
+    page_size: 100
+  popularity_api:    # external popularity / sentiment scores (REST)
+    kind: rest
+    base_url: http://127.0.0.1:8765
+    endpoint: /popularity
+
+ingestion:
+  max_retries: 4
+  backoff_seconds: 0.5          # exponential: 0.5, 1, 2, 4 ...
+  timeout_seconds: 5
+  schedule_minutes: 60          # periodic run (Prefect deployment interval)
+  api_failure_rate: 0.25        # mock API returns HTTP 503 this often -> exercises retries
+
+storage:
+  backend: local                # local | s3   (see configs/storage.yaml)
+  lake_root: data/lake
+  raw_zone: raw
+  quarantine_zone: quarantine
+
+simulation:
+  n_users: 1500
+  n_products: 600
+  days: 90
+  start_date: "2026-08-01"
+  stream_batches: 3             # near-real-time micro-batches produced by `simulate-stream`
+
+validation:
+  rating_min: 1
+  rating_max: 5
+  max_missing_pct: 2.0
+  max_duplicate_pct: 1.0
+
+features:
+  windows_days: [7, 30]
+  cooccurrence_top_n: 20
+
+training:
+  test_days: 14
+  k: 10
+  min_train_interactions: 3
+  event_weights: {view: 1.0, wishlist: 2.0, add_to_cart: 3.0, purchase: 5.0}
+  models:
+    popularity: {}
+    svd: {n_factors: 48}
+    content: {}
+    hybrid: {n_factors: 48, alpha: 0.7}

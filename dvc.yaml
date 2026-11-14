@@ -1,0 +1,74 @@
+# DVC pipeline: `dvc repro` rebuilds only stages whose dependencies changed;
+# dvc.lock (committed to Git) pins the hash of every input and output -> dataset versions.
+stages:
+  ingest:
+    cmd: python -m recomart.pipeline --stage ingest
+    deps:
+      - data/landing
+      - src/recomart/ingestion.py
+      - src/recomart/storage.py
+    params:
+      - configs/pipeline.yaml:
+          - ingestion
+          - sources
+    outs:
+      - data/lake/raw
+  validate:
+    cmd: python -m recomart.pipeline --stage validate
+    deps:
+      - data/lake/raw
+      - src/recomart/validation.py
+    params:
+      - configs/pipeline.yaml:
+          - validation
+    outs:
+      - reports/dq:
+          cache: false
+  prepare:
+    cmd: python -m recomart.pipeline --stage prepare
+    deps:
+      - data/lake/raw
+      - reports/dq            # quality gate must have passed
+      - src/recomart/preparation.py
+    outs:
+      - data/processed
+      - data/lake/quarantine
+  eda:
+    cmd: python -m recomart.pipeline --stage eda
+    deps:
+      - data/processed
+      - src/recomart/eda.py
+    outs:
+      - reports/figures:
+          cache: false
+  transform:
+    cmd: python -m recomart.pipeline --stage transform
+    deps:
+      - data/processed
+      - sql
+      - src/recomart/transform.py
+    outs:
+      - data/warehouse
+  features:
+    cmd: python -m recomart.pipeline --stage features
+    deps:
+      - data/warehouse
+      - src/recomart/feature_store.py
+    params:
+      - configs/pipeline.yaml:
+          - features
+    outs:
+      - data/feature_store
+  train:
+    cmd: python -m recomart.pipeline --stage train
+    deps:
+      - data/processed
+      - data/feature_store
+      - src/recomart/models.py
+      - src/recomart/train.py
+    params:
+      - configs/pipeline.yaml:
+          - training
+    metrics:
+      - reports/model_metrics.json:
+          cache: false

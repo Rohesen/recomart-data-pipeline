@@ -1,0 +1,15 @@
+# Runtime (tested on Python 3.9 in the BITS lab and Python 3.13)
+pandas>=1.5,<4
+numpy>=1.24,<3
+scipy>=1.10,<2
+scikit-learn>=1.2,<2
+pyarrow>=12,<26
+pyyaml>=6,<7
+requests>=2.28,<3
+pandera>=0.18,<1
+matplotlib>=3.6,<4
+mlflow>=2.12,<4
+fastapi>=0.100,<1
+uvicorn>=0.23,<1
+streamlit>=1.40,<2
+plotly>=5.18,<8

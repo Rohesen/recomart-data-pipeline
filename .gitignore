@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+*.egg-info/
+# data and run artefacts are versioned by DVC, not Git
+/data/
+/logs/
+/mlflow.db
+/mlartifacts/
+/mlruns/
+/reports/dq/
+/reports/figures/
+/reports/*.json
+.ipynb_checkpoints/

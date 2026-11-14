@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "recomart"
+version = "1.0.0"
+description = "End-to-end data management pipeline for the RecoMart recommendation system (DSE ZG529)"
+authors = [{ name = "Rohesen Rajkamal Maurya" }]
+requires-python = ">=3.9"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+testpaths = ["tests"]
