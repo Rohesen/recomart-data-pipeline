@@ -86,12 +86,14 @@ PHOTOS = ["rohesen", "akriti", "chelsa", "amogh"]   # same order as TEAM
 
 
 @st.cache_data(show_spinner=False)
+def _photo_data(path, mtime):    # mtime is part of the cache key, so a replaced photo shows up immediately
+    import base64
+    return "data:image/jpeg;base64," + base64.b64encode(Path(path).read_bytes()).decode()
+
+
 def _photo_uri(i):
     f = ROOT / "assets" / "team" / f"{PHOTOS[i]}.jpg"
-    if not f.exists():
-        return ""
-    import base64
-    return "data:image/jpeg;base64," + base64.b64encode(f.read_bytes()).decode()
+    return _photo_data(str(f), f.stat().st_mtime) if f.exists() else ""
 
 
 def avatar(i):
