@@ -79,7 +79,7 @@ flows/              Prefect flow and scheduled deployment
 serving/            FastAPI recommendation service
 notebooks/          data preparation and EDA notebook (executed)
 tests/              pytest suite
-docs/               STORAGE.md, VERSIONING.md, FEATURES.md, VIDEO_SCRIPT.md
+docs/               STORAGE.md, VERSIONING.md, FEATURES.md
 app.py              Streamlit walkthrough of every stage
 dvc.yaml            DVC pipeline definition
 ```
