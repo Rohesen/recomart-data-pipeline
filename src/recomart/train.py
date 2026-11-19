@@ -174,9 +174,48 @@ def registry_versions() -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values("version", ascending=False) if rows else pd.DataFrame()
 
 
+def _local_artifact_path(uri: str):
+    """Map an artifact URI recorded on another machine to this project's mlartifacts folder.
+
+    MLflow stores absolute artifact paths, so a project copied to a new folder or another OS
+    still points at the old location; the part after 'mlartifacts/' is the same everywhere."""
+    from pathlib import Path
+    from urllib.parse import unquote, urlparse
+    path = unquote(urlparse(uri).path) if "://" in uri else uri
+    marker = "mlartifacts/"
+    if marker not in path.replace("\\", "/"):
+        return None
+    rel = path.replace("\\", "/").split(marker, 1)[1]
+    local = MLFLOW_ARTIFACTS / Path(rel)
+    return local if local.exists() else None
+
+
 def load_champion():
     setup_mlflow()
-    m = mlflow.pyfunc.load_model(f"models:/{REGISTERED_MODEL}@{CHAMPION}")
+    try:
+        m = mlflow.pyfunc.load_model(f"models:/{REGISTERED_MODEL}@{CHAMPION}")
+    except Exception:
+        # project moved (e.g. unzipped elsewhere): load the same model version from the local copy
+        client = MlflowClient()
+        mv = client.get_model_version_by_alias(REGISTERED_MODEL, CHAMPION)
+        uris = [mv.source, getattr(mv, "storage_location", None) or ""]
+        if str(mv.source).startswith("models:/m-") and hasattr(client, "get_logged_model"):
+            try:   # MLflow 3: the version points at a logged model with its own artifact folder
+                uris.insert(0, client.get_logged_model(mv.source.split("/", 1)[1]).artifact_location)
+            except Exception:
+                pass
+        local = None
+        for uri in uris:
+            local = _local_artifact_path(uri) if uri else None
+            if local is not None:
+                break
+        if local is None:
+            run = MlflowClient().get_run(mv.run_id)
+            base = _local_artifact_path(run.info.artifact_uri)
+            local = (base / "model") if base is not None and (base / "model").exists() else None
+        if local is None:
+            raise
+        m = mlflow.pyfunc.load_model(str(local))
     return m.unwrap_python_model().model
 
 
