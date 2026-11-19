@@ -187,7 +187,7 @@ def apply():
         _css += """<style>
     .stApp {background: %(grad)s !important; background-attachment:fixed !important;}
     .stApp:before {content:""; position:fixed; inset:0; pointer-events:none; z-index:0; background: %(blobs)s;}
-    .block-container {position:relative; z-index:1;}
+    .block-container {position:relative;}
     section[data-testid="stSidebar"] {background: rgba(255,255,255,%(gs)s) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
            border-right:1px solid %(gb)s;}
     section[data-testid="stSidebar"] h3 {color:%(acc)s !important;}
@@ -319,6 +319,10 @@ def apply():
     .banner .av.photo {width:76px; height:76px;}
     .tm .av.photo {width:46px; height:46px;}
     .foot .avs .av.photo {width:34px; height:34px; box-shadow:0 0 0 2px #0A0D16, 0 0 0 3px var(--c) !important;}
+    [data-testid="stElementToolbar"] button {min-width:34px !important; min-height:34px !important; border-radius:10px !important;
+           background:rgba(17,22,42,.92) !important; border:1px solid rgba(147,197,253,.55) !important; color:#E5E7EB !important;}
+    [data-testid="stElementToolbar"] button:hover {background:rgba(147,197,253,.22) !important;}
+    [data-testid="stElementToolbar"] button svg {width:18px !important; height:18px !important;}
     ::-webkit-scrollbar {width:10px; height:10px;} ::-webkit-scrollbar-track {background:transparent;}
     ::-webkit-scrollbar-thumb {background:rgba(%(acc_rgb)s,.6); border-radius:10px;}
     </style>""" % dict(grad=S["grad"], blobs=_blobs, gs=(.35 if LIGHT else .04), gb=_gb, gt=_gt, sh=_sh,
